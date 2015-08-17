@@ -8,6 +8,8 @@ public class Waiter extends Person{
 		super("Waiter_"+id_counter++);
 		currentNumOfCustomer=0;
 	}
-	public void addCustomer
+	public void addCustomer(){
+		// test
+	}
 
 }
