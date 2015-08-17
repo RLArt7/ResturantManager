@@ -9,7 +9,7 @@ public class Waiter extends Person{
 		currentNumOfCustomer=0;
 	}
 	public void addCustomer(){
-		// test
+		// test 22
 		// new test 2
 
 	}
