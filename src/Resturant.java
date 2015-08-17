@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Vector;
 
 public class Resturant {
@@ -10,7 +12,7 @@ public class Resturant {
 	
 	private Vector<Waiter> waiters = new  Vector<Waiter>();
 	public Vector<Customer> customers = new  Vector<Customer>();
-	private Vector<Customer> waitingCustomers = new  Vector<Customer>();
+	private Queue<Customer> waitingCustomers = new  LinkedList<Customer>();
 
 	
 	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats) {

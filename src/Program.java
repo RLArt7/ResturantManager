@@ -43,9 +43,9 @@ public class Program {
 				resturant = addWaiter(resturant,input);
 //				resturant = addWaiter(resturant);
 				break;
-//			case "3":
+			case "3":
 //				showWaitingCustomers(resturant);
-//				break;
+				break;
 //			case "4":
 //				showTablesData(resturant);
 //				break;
