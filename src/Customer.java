@@ -70,10 +70,27 @@ public class Customer extends Person{
 					+ " Customer #" + this.getName() + " is watching a movie while waiting for his meal");
 
 //			theAirport.addWaitingAirplane(this);
+
 			wait();
 		}
 	}
-	
+	public void waitingForMenu() throws InterruptedException {
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is waiting tothe menu");
+//			theAirport.addWaitingAirplane(this);
+			wait();
+		}
+	}
+	public void eat() throws InterruptedException {
+		long actionTime = (long) (Math.random() * 10000);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Customer #" + this.getName() + " start to eat for" + actionTime
+				+ "ms");
+		Thread.sleep(actionTime);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Customer #" + this.getName() + " finished watching");
+	}
 	
 	
 }
