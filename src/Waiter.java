@@ -10,7 +10,9 @@ public class Waiter extends Person{
 		currentNumOfCustomer=0;
 	}
 	public void addCustomer(){
-		currentNumOfCustomer++;	
+		if(currentNumOfCustomer<2){
+			currentNumOfCustomer++;	
+		}
 	}
 	
 	//// i think it better to have this in the customer methos "waitingForMenu"
@@ -22,6 +24,22 @@ public class Waiter extends Person{
 //		System.out.println(Calendar.getInstance().getTimeInMillis()
 //				+ " Waiter #" + this.getName() + " deliver the menu");
 //	}
+	public void takeOrder() throws InterruptedException {
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Waiter #" + this.getName() + " is taking order now");
+//			theAirport.addWaitingAirplane(this);
+			wait();
+		}
+	}
+	public void passOrderToKitchen() throws InterruptedException {
+		long actionTime = (long) (Math.random() * 10000);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Waiter #" + this.getName() + " is bringing Order to Kitchen");
+		Thread.sleep(actionTime);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Waiter #" + this.getName() + " deliver the Order");
+	}
 	
 
 }

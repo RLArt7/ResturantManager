@@ -77,7 +77,15 @@ public class Customer extends Person{
 	public void waitingForMenu() throws InterruptedException {
 		synchronized (this) {
 			System.out.println(Calendar.getInstance().getTimeInMillis()
-					+ " Customer #" + this.getName() + " is waiting tothe menu");
+					+ " Customer #" + this.getName() + " is waiting to the menu");
+//			theAirport.addWaitingAirplane(this);
+			wait();
+		}
+	}
+	public void waitingForBill() throws InterruptedException {
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is waiting to the Bill");
 //			theAirport.addWaitingAirplane(this);
 			wait();
 		}
