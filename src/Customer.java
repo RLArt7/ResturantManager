@@ -21,53 +21,57 @@ public class Customer extends Person{
 	
 	@WhileWaiting
 	public void readNewsPaper() throws InterruptedException {
-		long actionTime = (long) (Math.random() * 10000);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " start reading a paper for" + actionTime
-				+ "ms");
-		Thread.sleep(actionTime);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " finished reading");
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is reading a paper while waiting for his meal");
+
+//			theAirport.addWaitingAirplane(this);
+
+			wait();
+		}
 	}
 	@WhileWaiting
 	public void playBubbles() throws InterruptedException {
-		long actionTime = (long) (Math.random() * 10000);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " start play Bubbles for" + actionTime
-				+ "ms");
-		Thread.sleep(actionTime);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " finished playing");
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is play Bubbles while waiting for his meal");
+
+//			theAirport.addWaitingAirplane(this);
+
+			wait();
+		}
 	}
 	@WhileWaiting
 	public void doHomework() throws InterruptedException {
-		long actionTime = (long) (Math.random() * 10000);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " start doing Homework for" + actionTime
-				+ "ms");
-		Thread.sleep(actionTime);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " finished Homework");
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is doing Homework while waiting for his meal");
+
+//			theAirport.addWaitingAirplane(this);
+
+			wait();
+		}
 	}
 	@NotAllowed
 	public void talkOnThePhone() throws InterruptedException {
-		long actionTime = (long) (Math.random() * 10000);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " start talknig on the phone for" + actionTime
-				+ "ms");
-		Thread.sleep(actionTime);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " finished talking");
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is talknig on the phone while waiting for his meal");
+
+//			theAirport.addWaitingAirplane(this);
+
+			wait();
+		}
 	}
 	@NotAllowed
 	public void whatchMovie() throws InterruptedException {
-		long actionTime = (long) (Math.random() * 10000);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " start watching a movie for" + actionTime
-				+ "ms");
-		Thread.sleep(actionTime);
-		System.out.println(Calendar.getInstance().getTimeInMillis()
-				+ " Customer #" + this.getName() + " finished watching");
+		synchronized (this) {
+			System.out.println(Calendar.getInstance().getTimeInMillis()
+					+ " Customer #" + this.getName() + " is watching a movie while waiting for his meal");
+
+//			theAirport.addWaitingAirplane(this);
+			wait();
+		}
 	}
 	
 	
