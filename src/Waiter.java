@@ -9,9 +9,16 @@ public class Waiter extends Person{
 		currentNumOfCustomer=0;
 	}
 	public void addCustomer(){
-		// test 22
-		// new test 2
-
+		currentNumOfCustomer++;	
 	}
+	public void bringMenu() throws InterruptedException {
+		long actionTime = (long) (Math.random() * 10000);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Waiter #" + this.getName() + " is bringing menu to customer");
+		Thread.sleep(actionTime);
+		System.out.println(Calendar.getInstance().getTimeInMillis()
+				+ " Waiter #" + this.getName() + " deliver the menu");
+	}
+	
 
 }
