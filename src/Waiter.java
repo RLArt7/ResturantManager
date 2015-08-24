@@ -15,7 +15,8 @@ public class Waiter extends Person{
 		}
 	}
 	
-	//// i think it better to have this in the customer methos "waitingForMenu"
+//------------------- i think it better to have this in the customer methods "waitingForMenu"--------------
+	
 //	public void bringMenu() throws InterruptedException {
 //		long actionTime = (long) (Math.random() * 10000);
 //		System.out.println(Calendar.getInstance().getTimeInMillis()
@@ -40,6 +41,7 @@ public class Waiter extends Person{
 		System.out.println(Calendar.getInstance().getTimeInMillis()
 				+ " Waiter #" + this.getName() + " deliver the Order");
 	}
+	
 	
 
 }
