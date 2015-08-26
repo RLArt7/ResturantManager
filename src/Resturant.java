@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
@@ -14,12 +15,14 @@ public class Resturant {
 	public Vector<Customer> customers = new  Vector<Customer>();
 	private Queue<Customer> waitingCustomers = new  LinkedList<Customer>();
 	private Kitchen kitchen;
+	private WorkingDay workingDay;
 
 	
-	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats) {
+	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats) throws SecurityException, IOException {
 		this.resturantName = resturantName;
 		this.maxCustomersPerDay = maxCustomersPerDay;
 		this.numOfSeats = numOfSeats;
+		workingDay = new WorkingDay(resturantName + "Logger");
 	}
 	public void setResturantName(String resturantName) {
 		this.resturantName = resturantName;
