@@ -13,6 +13,7 @@ public class Resturant {
 	private Vector<Waiter> waiters = new  Vector<Waiter>();
 	public Vector<Customer> customers = new  Vector<Customer>();
 	private Queue<Customer> waitingCustomers = new  LinkedList<Customer>();
+	private Kitchen kitchen;
 
 	
 	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats) {
