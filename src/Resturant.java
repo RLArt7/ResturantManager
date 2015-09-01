@@ -12,6 +12,7 @@ public class Resturant {
 	private static int customerCunter=0;
 	
 	private Vector<Waiter> waiters = new  Vector<Waiter>();
+	private Queue<Waiter> waitingWaiters = new  LinkedList<Waiter>();
 	public Vector<Customer> customers = new  Vector<Customer>();
 	private Queue<Customer> waitingCustomers = new  LinkedList<Customer>();
 	private Kitchen kitchen;
@@ -50,6 +51,16 @@ public class Resturant {
 			}
 		}
 		
+	}
+	public void addWaiter() {
+		if(waiters.size()<maxWaitersPerShift){
+			this.waiters.addElement(new Waiter("Waiter"));
+		}else{
+			this.waitingWaiters.add(new Waiter("Waiter"));
+		}
+	}
+	public Customer[] getWaitingCustomer() {
+		return (Customer[]) this.waitingCustomers.toArray();
 	}
 
 }

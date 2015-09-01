@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.Scanner;
+import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,8 +15,9 @@ public class Program {
 	public static void main(String[] args) {
 		
 		Resturant resturant = initializeResturantFromXml();
+		WorkingDay mainLogger; //need to pass to it the relevant data
 		if(resturant == null){
-			System.out.println("We have Null here need to throw exception!");
+			System.out.println("SEVERE : We have Null here need to throw exception!");
 			return;
 		}
 //		for(Customer cast:resturant.customers){
@@ -41,17 +43,16 @@ public class Program {
 				break;
 			case "2":
 				resturant = addWaiter(resturant,input);
-//				resturant = addWaiter(resturant);
 				break;
 			case "3":
-//				showWaitingCustomers(resturant);
+				showWaitingCustomers(resturant);
 				break;
-//			case "4":
-//				showTablesData(resturant);
-//				break;
-//			case "5":
-//				showResturantProfits(resturant);
-//				break;
+			case "4":
+				showTablesData(resturant);
+				break;
+			case "5":
+				showResturantProfits(resturant);
+				break;
 			case "6":
 				resturant.closeTheDay();
 				brakeloop=false;
@@ -65,7 +66,26 @@ public class Program {
 
 	}
 
+	private static void showResturantProfits(Resturant resturant) {
+		// Need to collect data and prices from Orders
+		
+	}
+
+	private static void showTablesData(Resturant resturant) {
+		//to be complete all the data in every table
+	}
+
+	private static void showWaitingCustomers(Resturant resturant) {
+		Customer[] waitingCustomer = resturant.getWaitingCustomer();
+		for(Customer customer:waitingCustomer){
+			System.out.println(customer.toString());
+		}
+	}
+
 	private static Resturant addWaiter(Resturant resturant, Scanner input) {
+		System.out.println("Waiter Added Succssesfuly..");
+		resturant.addWaiter();
+		
 		
 		return resturant;
 	}
