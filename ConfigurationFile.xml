@@ -1,5 +1,5 @@
-<Resturant name="Frida Hecht" maxCustomersPerDay="15" numOfSeats="13">
-	<Waiters maxWaitersInShift="2" maxCustomersCuncurrentlPerWaiter="4" maxCustomersPerShift="4">
+<Resturant name="Frida_Hecht" maxCustomersPerDay="11" numOfSeats="10">
+	<Waiters maxWaitersInShift="2" maxCustomersCuncurrentlPerWaiter="4" maxCustomersPerShift="5">
 	</Waiters>
 	<Customers>
 		<Customer name="customer_01" whileWaiting="readNewsPaper"/>
