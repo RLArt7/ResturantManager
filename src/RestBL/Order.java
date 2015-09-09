@@ -8,6 +8,8 @@ import java.util.logging.Level;
 public class Order {
 	public enum status  {ResivedTable,FoodReady,WaitingFood,WaitingMenu,CustomerCanEat,WaitForOrder,New,WaitingForBill,Closed,BrowsingMenu}
 	
+	
+	private static int orderCounter = 0;
 	private int numOfOrder;
 	private String message;
 	private Table table;
@@ -29,20 +31,25 @@ public class Order {
 
 	
 
-	public Order(int numOfOrder, Table table,Waiter theWaiter,Kitchen kitchen,Customer theCustomer) {
-		theLogger = new WorkingDay("orderLogger",this);
+	public Order(Table table,Waiter theWaiter,Kitchen kitchen,Customer theCustomer) {
+		this.numOfOrder = orderCounter++;
+		theLogger = new WorkingDay("orderLogger_"+numOfOrder,this);
 		theLogger.setLoggerLevel(Level.FINEST);
-		this.numOfOrder = numOfOrder;
 		this.table = table;
+		allCustomerOrderL = new Vector<CustomerOrderListeners>();
+		allWaiterOrderL = new Vector<WaiterOrderListener>();
 		this.theCustomer=theCustomer;
 		this.theWaiter = theWaiter;
 		this.kitchen = kitchen;
 		setOrderBill();
 		isReady=false;
 		
-		
+
 		registerWaiterOrderListeners(theWaiter);
+		
 		registerCustomerOrderListeners(theCustomer);
+		
+		
 		orderStatus = status.ResivedTable;
 		
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
@@ -61,6 +68,7 @@ public class Order {
 		// Gets the new order status
 		orderStatus = myNewStatus;
 		// Checks if the new status is related to the customers
+//		System.out.println("myNewStatus: " + myNewStatus);
 		if((orderStatus == status.BrowsingMenu ) || (orderStatus == status.CustomerCanEat) 
 				||(orderStatus ==status.Closed)){
 			// Change boolean to false - waiters not notified

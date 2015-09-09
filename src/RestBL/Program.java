@@ -13,22 +13,24 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Program {
+	private static Vector<Customer> allCustomers;
 	private static WorkingDay mainLogger= new WorkingDay("ProgramLogger",new Object());
 	private static Resturant resturant;
 	public static void main(String[] args) {
-		mainLogger.setLoggerLevel(Level.CONFIG);
+		mainLogger.setLoggerLevel(Level.INFO);
+		allCustomers = new Vector<Customer>();
 		resturant = initializeResturantFromXml(); 
-		
-		Vector<Customer> allCustomers = new Vector<Customer>();
+
+
 		//need to pass to it the relevant data
 		if(resturant == null){
 			mainLogger.logger().log(Level.SEVERE, "[Error] : The XML File was Empty or Corrupted!");
 			return;
 		}
-				for(Customer cast:resturant.getCustomers()){
-					System.out.println(cast.toString());
-				}
-		allCustomers = resturant.getCustomers();
+		for(Customer cast:resturant.getCustomers()){
+			System.out.println(cast.toString());
+		}
+
 		resturant.setRunning(true);
 		Scanner input =new Scanner(System.in);
 		resturant.Waiterstarter(); //starts all waiters assigned to this restaurant 
@@ -65,10 +67,12 @@ public class Program {
 				break;
 			case "5":
 				mainLogger.logger().log(Level.INFO, "Showing Resturant Profits");
-				showResturantProfits(resturant);
+				System.out.println("today profit is: "+resturant.getSumOfBills());
 				break;
 			case "6":
 				mainLogger.logger().log(Level.INFO, "Start Closing The Day prosses");
+				resturant.setRunning(false);
+				resturant.forcedTimeToClose();
 				resturant.closeTheDay();
 				brakeloop=false;
 				System.out.println("GOOD BYE...");
@@ -82,18 +86,28 @@ public class Program {
 
 	}
 
-	private static void showResturantProfits(Resturant resturant) {
-		// Need to collect data and prices from Orders
-
-	}
 
 	private static void showTablesData(Resturant resturant) {
-		//to be complete all the data in every table
+		// Running over all of the waiters
+		for(int i = 0; i < resturant.getWaitersThatFinishedShift().size();i++){
+			// Running over every order
+			for(int j = 0; j < resturant.getWaitersThatFinishedShift().get(i).getMyOrders().size(); j++){
+				// Get the table
+				Table tbl = resturant.getWaitersThatFinishedShift().get(i).getMyOrders().get(j).getOrderTable();
+
+				// Get the customer
+				Customer cust =  resturant.getWaitersThatFinishedShift().get(i).getMyOrders().get(j).getCustomer();
+
+				// Prints the data
+				System.out.println("Table no. " + tbl.getNumOfTblID() + " : " +
+						" has customer " + cust.getCustName() +
+						" and the waiter is " + resturant.getWaitersThatFinishedShift().get(i).getWaiterName());
+			}
+		}
 	}
 
 	private static void showWaitingCustomers(Resturant resturant) {
-		Customer[] waitingCustomer = resturant.getWaitingCustomer();
-		for(Customer customer:waitingCustomer){
+		for(Customer customer:resturant.getCustomers()){
 			System.out.println(customer.toString());
 		}
 	}
@@ -161,9 +175,9 @@ public class Program {
 
 			String message = "Root element : " + doc.getDocumentElement().getNodeName();
 			////Resturant
-			mainLogger.logger().log(Level.CONFIG, message);
+			mainLogger.logger().log(Level.INFO, message);
 			message = doc.getDocumentElement().getNodeName() + " name :" + doc.getDocumentElement().getAttribute("name") ;
-			mainLogger.logger().log(Level.CONFIG,message);
+			mainLogger.logger().log(Level.INFO,message);
 			String tempName =doc.getDocumentElement().getAttribute("name");
 			int numOfCustPrDay =Integer.parseInt(doc.getDocumentElement().getAttribute("maxCustomersPerDay"));
 			int numofSts = Integer.parseInt(doc.getDocumentElement().getAttribute("numOfSeats"));
@@ -178,11 +192,11 @@ public class Program {
 				maxCustomersPerWaiter = (Integer.parseInt(eElement.getAttribute("maxCustomersCuncurrentlPerWaiter")));
 			}
 			returnRest = new  Resturant(tempName,numOfCustPrDay,numofSts,maxWaiters,maxCustomersPerWaiter);
-//			for (int i= 0 ; i<maxWaiters;i++){
-//				Waiter temp = new Waiter(returnRest); 
-//				System.out.println(temp + " Program Create waiter");
-//				returnRest.addWaiter(temp);
-//			}
+			//			for (int i= 0 ; i<maxWaiters;i++){
+			//				Waiter temp = new Waiter(returnRest); 
+			//				System.out.println(temp + " Program Create waiter");
+			//				returnRest.addWaiter(temp);
+			//			}
 			//        	 returnRest.setMaxCustomersPerWaiter(maxCustomersPerWaiter);
 			NodeList nList = doc.getElementsByTagName("Customer");
 			for (int temp = 0; temp < nList.getLength(); temp++) {
@@ -191,7 +205,7 @@ public class Program {
 				if (nNode.getNodeType() == Node.ELEMENT_NODE) {
 					eElement = (Element) nNode;
 					Customer tempCustomer = new Customer(eElement.getAttribute("name"),eElement.getAttribute("whileWaiting"),returnRest);
-					returnRest.addCustomer(tempCustomer);
+					allCustomers.add(tempCustomer);
 				}
 
 			}

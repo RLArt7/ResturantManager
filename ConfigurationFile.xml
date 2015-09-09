@@ -1,5 +1,5 @@
-<Resturant name="Frida_Hecht" maxCustomersPerDay="11" numOfSeats="10">
-	<Waiters maxWaitersInShift="2" maxCustomersCuncurrentlPerWaiter="4" maxCustomersPerShift="5">
+<Resturant name="Frida_Hecht" maxCustomersPerDay="10" numOfSeats="9">
+	<Waiters maxWaitersInShift="3" maxCustomersCuncurrentlPerWaiter="4" maxCustomersPerShift="4">
 	</Waiters>
 	<Customers>
 		<Customer name="customer_01" whileWaiting="readNewsPaper"/>
@@ -12,7 +12,8 @@
 		<Customer name="customer_08" whileWaiting="watchMovie"/>
 		<Customer name="customer_09" whileWaiting="playBubbles"/>
 		<Customer name="customer_10" whileWaiting="talkOnThePhone"/>
-		<Customer name="customer_11" whileWaiting="readNewsPaper"/>
+		<!--<Customer name="customer_11" whileWaiting="readNewsPaper"/>
+		-->
 	</Customers>
 </Resturant>
 

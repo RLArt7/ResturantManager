@@ -6,7 +6,7 @@ import java.util.logging.Level;
 
 
 public class WorkingDay{
-	private static Logger theLogger;
+	private Logger theLogger;
 	private FileHandler theFileHandler;
 	
 	

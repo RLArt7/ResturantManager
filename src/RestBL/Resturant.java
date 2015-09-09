@@ -12,27 +12,25 @@ public class Resturant {
 	private String resturantName;
 	private int maxCustomersPerDay;
 	private int numOfSeats;
-	private int maxNumOfTables;
+//	private int maxNumOfTables;
 	private int maxWaitersInShift;
 	private int maxCustomersCuncurrentlPerWaiter;
 	private int maxNumOfTablesPerWaiter;
 	private int maxNumOfWaiters;
 
-	private static int customerCunter=0;
+	private int customerCunter = 0;
 	private LocalDate timeOfOpen;
 	private ReentrantLock myRestLock = new ReentrantLock();
 
 	private Vector<Waiter> waiters;
-//	private Queue<Waiter> waitingWaiters;
+	//	private Queue<Waiter> waitingWaiters;
 
 	private Vector<Waiter> allWaitersInShift;
 	private Vector<Waiter> allWaitersFinishedShift;
 	private Vector<Table> allTables;
 
 	private Vector<Customer> customers ;
-//	private Queue<Customer> waitingCustomers;
-	private Vector<Customer> customerInLine;
-
+	//	private Queue<Customer> waitingCustomers;
 	private Vector<Order> allRestServedAndPayed;
 	private Vector<RestaurantListener> allRestarauntListeners;
 	private String message;
@@ -45,29 +43,28 @@ public class Resturant {
 	private WorkingDay workingDay;
 
 
-	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats,int maxWaiters,int maxCustomersCuncurrentlPerWaiter) throws SecurityException, IOException {
+	public Resturant(String resturantName, int maxCustomersPerDay, int numOfSeats,int maxWaiters,int maxCustomersCuncurrentlPerWaiter/*,Vector<Customer> customers*/) throws SecurityException, IOException {
 		this.resturantName = resturantName;
 		this.maxCustomersPerDay = maxCustomersPerDay;
 		this.maxCustomersCuncurrentlPerWaiter = maxCustomersCuncurrentlPerWaiter;
 		this.numOfSeats = numOfSeats;
 		this.workingDay = new WorkingDay(resturantName.trim() + "Logger",this);
-		this.workingDay.setLoggerLevel(Level.INFO);
+		this.workingDay.setLoggerLevel(Level.FINEST);
 		this.maxWaitersInShift = maxWaiters;
-//		this.waitingWaiters = new  LinkedList<Waiter>();
 		this.customers = new  Vector<Customer>();
-//		this.waitingCustomers = new LinkedList<Customer>();
+//		this.customers = customers;
 		this.kitchen = new Kitchen(this);
 		this.allWaitersFinishedShift = new Vector<Waiter>();
 		this.allWaitersInShift = new Vector<Waiter>();
 		this.allTables = new Vector<Table>();
 		this.waiters = new Vector<Waiter>();
-		this.customerInLine = new Vector<Customer>();
 		this.allRestServedAndPayed = new Vector<Order>();
 		this.allRestarauntListeners = new Vector<RestaurantListener>();
 		this.timeOfOpen = LocalDate.now();
 		this.isOpen = true;
 		setWaitersInfo();
 		setAllWaiters();
+		setAlltables();
 
 
 
@@ -82,12 +79,11 @@ public class Resturant {
 
 		// According to the max visitors, calculates how many waiters will be needed
 		this.maxNumOfWaiters = maxCustomersPerDay /maxCustomersCuncurrentlPerWaiter;
-//		System.out.println(maxNumOfWaiters);
-		this.maxNumOfTablesPerWaiter = maxNumOfTables / maxWaitersInShift ;
+		this.maxNumOfTablesPerWaiter = numOfSeats / maxWaitersInShift ;
 		// Adds another waiter if needed
 		if(maxCustomersPerDay % maxCustomersCuncurrentlPerWaiter != 0)
 			this.maxNumOfWaiters += 1;
-		if(maxNumOfTables % maxWaitersInShift != 0)
+		if(numOfSeats % maxWaitersInShift != 0)
 			this.maxNumOfTablesPerWaiter += 1;
 
 		// Writes to log
@@ -100,9 +96,8 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 		// Creates the Max num of waiters
-		for(int i = 0 ; i<maxNumOfWaiters;i++){
+		for(int i = 0 ; i < maxNumOfWaiters;i++){
 			// Creating a new waiter
-			System.out.println(this + " Resturant Create waiter");
 			Waiter newWaiter = new Waiter(this);
 			// Adds the waiter
 			waiters.add(newWaiter);
@@ -117,7 +112,7 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 		// Creating the tables
-		for (int i = 0 ;i < maxNumOfTables;i++){
+		for (int i = 0 ;i < numOfSeats;i++){
 			// Adds the table
 			allTables.add(new Table(i+1));
 		}
@@ -140,29 +135,18 @@ public class Resturant {
 
 	}
 	public void addCustomer(Customer customer) {
-//		if(customerCunter < maxCustomersPerDay){
-//			if(customers.size() < numOfSeats){
-				customers.add(customer);
-				customerCunter++;
-//			}else{
-//				waitingCustomers.add(customer);
-//				customerCunter++;
-//			}
-//		}
+		//		if(customerCunter < maxCustomersPerDay){
+		//			if(customers.size() < numOfSeats){
+//		customers.add(customer);
+
 
 	}
 	public LocalDate getTimeOfOpen() {
 		return timeOfOpen;
 	}
-//	public void addWaiter() {
-////		if(waiters.size()<maxWaitersInShift){
-//			this.waiters.addElement(new Waiter(this));
-////		}else{
-////			this.waitingWaiters.add(new Waiter(this));
-////		}
-//	}
+
 	public Customer[] getWaitingCustomer() {
-		return (Customer[]) this.customerInLine.toArray();
+		return (Customer[]) this.customers.toArray();
 	}
 	public Vector<Customer> getCustomers() {
 		return this.customers;
@@ -221,12 +205,10 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 		// Going through every waiter
-//		System.out.println( waiters.size()+ " hahahahaha");
 		for(int i = 0 ; i < waiters.size() ; i++){
 			// Starts the waiter
 			waiters.elementAt(i).start();
 			// Writes to log
-			System.out.println(i + ", "+ waiters.elementAt(i).toString());
 			workingDay.logger().log(Level.FINEST,">>>>"+message +" Waiter, "+ waiters.elementAt(i).toString() + " started",this);
 		}
 		// Writes to log
@@ -252,11 +234,10 @@ public class Resturant {
 
 	}
 	public Vector<Waiter> getAllWaitersInShift() {
-		return waiters;
+		return this.allWaitersInShift;
 	}
 	public void addWaiter(Waiter aWaiter){
 		// Writes to log
-		System.out.println("waiter add Harel!!!!");
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 		// If there is a need in more waiters
@@ -285,6 +266,7 @@ public class Resturant {
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 		// Checks if the waiters in shift is not the max number allowed
 		if (allWaitersInShift.size() < maxWaitersInShift){
+
 			// Adds the waiter to the shift
 			this.allWaitersInShift.add(aWaiter);
 			workingDay.logger().log(Level.FINEST,	message +"Waiter,"+ aWaiter.toString()+ " started shift",this);
@@ -325,6 +307,7 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" for waiter," + aWaiter.toString(),this);
 		// Going through every table
+		
 		for(int i=0; i<allTables.size();i++){
 			// If the table is not assigned to a waiter and the waiter can have more tables
 			if((!allTables.elementAt(i).getAssignedToWaiter()) && (aWaiter.getTablesSize() < this.maxNumOfTablesPerWaiter )){
@@ -339,11 +322,13 @@ public class Resturant {
 
 	}
 	public void setFinishedMyShift(Waiter aWaiter){
-		// Writes to log
+		// Writes to log*****************************************change was made here
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" for waiter," + aWaiter.toString(),this);
 		// Adds waiter to finished shift
+		allWaitersInShift.remove(aWaiter);
 		allWaitersFinishedShift.add(aWaiter);
+		
 	}
 	public Vector<Waiter> getWaitersThatFinishedShift(){
 		// Writes to log
@@ -357,6 +342,7 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" for waiter," + waiterToRemove.toString(),this);
 		// If there are waiters
+//		waiterToRemove.setInShift(false);
 		if(!waiters.isEmpty()){
 			// Runs over every table that waiter to remove has
 			for(int i = 0; i < waiterToRemove.getTablesSize(); i++){
@@ -394,7 +380,7 @@ public class Resturant {
 		this.isOpen = newStatus;
 	}	
 	public void regsterCustomerToLine(Customer aCustomer) throws Exception{
-		// Writes to log
+		// Writes to log***********************************
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" for,"+aCustomer.toString(),this);
 		// If the rest has it's max customer per day
@@ -406,10 +392,11 @@ public class Resturant {
 		}
 		// If there is room for more customers
 		else if ((customerCunter < maxCustomersPerDay) ){
+
 			// Writes to log
 			workingDay.logger().log(Level.FINEST,	message +" for,"+aCustomer.toString() + "add to line ",this);
 			// Adds customer to waiting line
-			customerInLine.add(aCustomer);
+			customers.add(aCustomer);
 			// add cust to rest listener
 			registerToRestaurantListener(aCustomer);
 			// Set customer 'isRegistered' true
@@ -437,6 +424,7 @@ public class Resturant {
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" add,"+sarvedAndPayed.toString(),this);
 		// Add the Closed order to allRestServedAndPayed
+		
 		allRestServedAndPayed.add(sarvedAndPayed);
 
 	}
@@ -450,12 +438,13 @@ public class Resturant {
 		// Writes to log
 		workingDay.logger().log(Level.FINEST,	">>>>"+message +" restaurant allWaitersInShift.size(), " + allWaitersInShift.size() ,this);
 		// If there are customers waiting in line and the rest is open for customers
-		if(((customerInLine.size()>0)&& isOpenForCustomers)){
+		if(((customers.size() > 0 ) && isOpenForCustomers)){
 			// Writes to log
-			workingDay.logger().log(Level.FINEST,	message +" at if(((customerInLine.size()>0)&& isOpenForCustomers))" ,this);
+			workingDay.logger().log(Level.FINEST,	message +" at if(((customers.size()>0)&& isOpenForCustomers))" ,this);
 
 			// Gets the first waiter in shift
 			if(allWaitersInShift.size()>0){
+
 				// Writes to log
 				workingDay.logger().log(Level.FINEST,	message +" 	at if(allWaitersInShift.size()>0)" ,this);
 				// Sets the first waiter to default Waiter that has the most free tables
@@ -464,7 +453,7 @@ public class Resturant {
 				for(int i = 1; i < allWaitersInShift.size() ; i++ ){
 					// Checks which waiter has more free tables
 					if(allWaitersInShift.elementAt(i).getNumOfFreeTbl()>MaxFreeTblWaiter.getNumOfFreeTbl()){
-						
+
 						// Set the waiter with more free tables
 						MaxFreeTblWaiter = allWaitersInShift.elementAt(i);
 						// Writes to log
@@ -479,22 +468,24 @@ public class Resturant {
 
 
 				try{
+
 					// If the chosen waiter has free tables and he hasn't reached his max customers per waiter per day
 					if((MaxFreeTblWaiter.getNumOfFreeTbl()>0) && (MaxFreeTblWaiter.getSizeofMyserved() < this.getMaxCustomersPerWaiter())){
 						// Writes to log
 						workingDay.logger().log(Level.FINEST,	message +" 	at if((MaxFreeTblWaiter.getNumOfFreeTbl()>0) && (MaxFreeTblWaiter.getSizeofMyserved() < this.getMaxCustomersPerWaiter()))" ,this);
 						// If there are customers waiting in line
-						if(customerInLine.size()>0){
+						if(customers.size()>0){
+
 							// Writes to log
-							workingDay.logger().log(Level.FINEST,	message +" 	at if(customerInLine.size()>0)" ,this);
+							workingDay.logger().log(Level.FINEST,	message +" 	at if(customers.size()>0)" ,this);
 							workingDay.logger().log(Level.FINEST,	message  +MaxFreeTblWaiter.getName() + "will get the Customer" + MaxFreeTblWaiter.getNumOfFreeTbl() ,this);
 							// Add the customer to the waiter
-							MaxFreeTblWaiter.addCustomer(customerInLine.elementAt(0));
+							MaxFreeTblWaiter.addCustomer(customers.elementAt(0));
 							// Writes to log
-							workingDay.logger().log(Level.FINEST,	message +" assigned New Customer: "+customerInLine.elementAt(0).getCustName()+
+							workingDay.logger().log(Level.FINEST,	message +" assigned New Customer: "+customers.elementAt(0).getCustName()+
 									"for Waiter: "+MaxFreeTblWaiter.getName() ,this);
 							// Remove customer from customers waiting in line
-							customerInLine.remove(0);
+							customers.remove(0);
 							synchronized(MaxFreeTblWaiter){
 								// Notify the waiter
 								MaxFreeTblWaiter.notify();
@@ -502,22 +493,25 @@ public class Resturant {
 								workingDay.logger().log(Level.FINEST,	message +" MaxFreeTblWaiter, "+MaxFreeTblWaiter.toString()+" sucessfully notified" ,this);
 
 							}
-						}	
+						}
+
 					}
 
+//					System.out.println("in here resturant checkIfCustomerWaitsForTBL customers.size(): try4 "+ customers.size());
 				}catch(ArrayIndexOutOfBoundsException e){
 					// Writes to exception log
 					workingDay.logger().log(Level.FINEST,	message +" MaxFreeTblWaiter, "+MaxFreeTblWaiter.toString()+" there is no customer in line" ,this);
 
 				}
 			}
+			
 		}
+		
 		// If there are no customers waiting in line and the rest have served the max num of customers per day
-		else if(customerInLine.isEmpty() && (allRestServedAndPayed.size() == maxCustomersPerDay)){
+		else if(customers.isEmpty() && (allRestServedAndPayed.size() == maxCustomersPerDay)){
 			// Writes to log
-			workingDay.logger().log(Level.FINEST,	message +" at 	else if(customerInLine.isEmpty() && (allRestServedAndPayed.size() == maxNumOfVisiters)) " ,this);
-			System.out.println("time to close");
-			// Checks if it is time to close the rest
+			workingDay.logger().log(Level.FINEST,	message +" at 	else if(customers.isEmpty() && (allRestServedAndPayed.size() == maxNumOfVisiters)) " ,this);
+			System.out.println("time to close reach Maximum Client for today");
 			isTimeToClose();
 		}
 		// Writes to log
@@ -536,15 +530,14 @@ public class Resturant {
 		workingDay.logger().log(Level.FINEST,	">>>>"+message ,this);
 
 		// Runs over every customer waiting in line
-		for(int i = 0 ; i < customerInLine.size() ; i++){
+		for(int i = 0 ; i < customers.size() ; i++){
 			// Prints the customer details
-			workingDay.logger().log(Level.FINEST,	">>>>"+message +customerInLine.elementAt(i).toString() ,this);
-			System.out.println(customerInLine.elementAt(i).getCustName() +" is waiting in line.");
+			workingDay.logger().log(Level.FINEST,	">>>>"+message +customers.elementAt(i).toString() ,this);
 		}
 		// Writes to log
 		workingDay.logger().log(Level.FINEST,	"<<<<"+message , this);
 	}
-	
+
 	public Kitchen getKitchen(){
 		// Writes to log
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
@@ -554,31 +547,31 @@ public class Resturant {
 	}
 	public void isTimeToClose(){
 		// If there are no customers waiting in line and the rest has served it's max customers to serve per day
-		if((allRestServedAndPayed.size() == this.maxCustomersPerDay)&&(customerInLine.size() == 0)){
+		if((allRestServedAndPayed.size() == this.maxCustomersPerDay)&&(customers.size() == 0)){
 			// Closing the rest
 			this.setOpen(false);
 			// Closing the kitchen
 			this.kitchen.setOpen(false);
 		}
-		System.out.println(this.resturantName + " sucessfully finished");
+		System.out.println(this.resturantName + " sucessfully finished alone");
 		endTime = System.currentTimeMillis();
 	}
-	
+
 	public void forcedTimeToClose(){
 		// Clearing the waiting customers
-		this.customerInLine.clear();
+		this.customers.clear();
 		// Closing the rest
 		this.setOpen(false);
 		// Closing the kitchen
 		this.kitchen.setOpen(false);
-		System.out.println(this.resturantName + " sucessfully finished");
+		System.out.println(this.resturantName + " sucessfully finished Force");
 		endTime = System.currentTimeMillis();
 	} 
 	public boolean isOpen() {
 		// Writes to log
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] "+ this.toString();
 		workingDay.logger().log(Level.FINEST,	"<<<<"+message+" return, "+isOpen ,this);
-		
+
 		return isOpen;
 	}
 

@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.locks.Lock;
+//import java.util.concurrent.locks.Lock;
 import java.util.logging.*;
-//import sun.misc.Lock;
-
+import sun.misc.Lock;
 import RestBL.Order.status;
 
 
@@ -23,7 +22,7 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 
 	private Order myOrder ;
 	private boolean isRegisterder = false;
-	private Lock myCustomerlock;
+	private Lock myCustomerlock=  new Lock();
 	private boolean lockedOnRest = false;
 	private boolean madeHisOrder = false;
 	private boolean isWaitingforFood =false;
@@ -66,13 +65,19 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 		this.myOrder = myNewOrder;
 	}
 	public void  WhileWaiting(){ 
-		System.out.println("While Waiting Method");
 
 		// Writing into the log that WhileWaiting method started
 		theCustLogger.logger().log(Level.FINEST, "WhileWaiting method started started and locked",this);
 
 		// Locking the lock
-		this.myCustomerlock.lock();
+		try {
+			
+			this.myCustomerlock.lock();
+			
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 
 		// Getting all the methods in customer class
 		Method[] myWaitMethods = this.getClass().getMethods();
@@ -159,7 +164,6 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 	}
 	public void browseMenu(){
 		//Writing to log
-		System.out.println("browesing Menu Method");
 		theCustLogger.logger().log(Level.FINEST, "Customer " + this.getCustName() + " is browsing in the menu.",this);
 		theCustLogger.logger().log(Level.INFO, "Customer " + this.getCustName() + " is browsing in the menu.",this);
 
@@ -175,7 +179,6 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 	}
 	public void makeOrder(){
 		//Writing to log
-		System.out.println("making Order Method");
 
 		theCustLogger.logger().log(Level.FINEST,"Customer " + this.getCustName()+ " is making his order.",this);
 		theCustLogger.logger().log(Level.INFO,"Customer " + this.getCustName()+ " is making his order.",this);
@@ -210,7 +213,6 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 		// Writes to log
 		theCustLogger.logger().log(Level.FINEST, this.getClass().getName()+" run() started for Customer: "+ this.name,this );
 		//while the restaurant is opened and the Customer yet to be finished try to register to line
-//		System.out.println(resturant.isRunning() + " ; " + isFinished + " : " + canRegister);
 		while((resturant.isRunning() && (!isFinished) && (canRegister))){
 			// register to restaurant listener
 			resturant.registerToRestaurantListener(this);
@@ -312,8 +314,9 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 						theCustLogger.logger().log(Level.FINEST, this.getClass().getName()+" run() started for Customer: "+ this.name
 								+" in while(this.isRegisterder)"+" sucessfully in wait",this );
 						// Wait for browsingMenuLatch
+						System.out.println(this.getCustName() + " start Await");
 						browsingMenuLatch.await();
-
+						System.out.println(this.getCustName() + " finish Await");
 						// Browse the menu
 						browseMenu();
 						// Place his order
@@ -389,7 +392,6 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 				}
 
 			}
-
 			// If the customer has registered to the rest line
 			if(isRegisterder){
 				// Write to log
@@ -415,6 +417,9 @@ public class Customer extends Thread implements CustomerOrderListeners,Restauran
 	}
 	public void setIsRegisterder(boolean Register){
 		this.isRegisterder = Register;
+	}
+	public boolean getIsRegisterder(){
+		return this.isRegisterder;
 	}
 	public void setCanRegister(){
 		this.canRegister = false;

@@ -30,6 +30,7 @@ public class Waiter extends Thread implements WaiterOrderListener{
 		this.name = "Waiter_"+ id_counter++;
 		currentNumOfCustomer=0;
 		waiterLogger= new WorkingDay(name,this);
+		waiterLogger.setLoggerLevel(Level.FINEST);
 		this.resturant = rest;
 		allMyToDo = new Vector<Order>();
 		allMyTabels = new Vector<Table>();
@@ -77,7 +78,7 @@ public class Waiter extends Thread implements WaiterOrderListener{
 				// Writes to log
 				waiterLogger.logger().log(Level.FINEST,	message+ "found aTable: " + allMyTabels.elementAt(i).getNumOfTblID() + "getIsTaken:" +  allMyTabels.elementAt(i).getIsTaken()  ,this);
 				// Create an order for the customer
-				myOrder = new Order(i,allMyTabels.elementAt(i),this,resturant.getKitchen(),aCustomer);
+				myOrder = new Order(allMyTabels.elementAt(i),this,resturant.getKitchen(),aCustomer);
 				// Writes to log
 				waiterLogger.logger().log(Level.FINEST,	message+"seetCustomerToHisTable(); opend new Order, " + myOrder.toString() ,this);
 				// Adds the order to the waiters orders
@@ -88,6 +89,8 @@ public class Waiter extends Thread implements WaiterOrderListener{
 				waiterLogger.logger().log(Level.FINEST, message+"seetCustomerToHisTable(); has sucessfully to seat aCustomer " + aCustomer.getId() ,this);
 				// Set the order status
 				myOrder.setStatus(status.WaitingMenu);
+				
+				
 				// Stops the for
 				break;
 			}
@@ -137,7 +140,6 @@ public class Waiter extends Thread implements WaiterOrderListener{
 					}
 					// Unlock the order
 					toGiveBill.getmyOrderLock().unlock();
-
 					// Remove the order from the waiters to do
 					allMyToDo.remove(toGiveBill);
 					// Checks if there is another customer waiting to be sited
@@ -214,7 +216,7 @@ public class Waiter extends Thread implements WaiterOrderListener{
 			// Set the waiter's status to in shift
 			this.setRegisterdToShift(true);
 			// Writes to log
-			waiterLogger.logger().log(Level.FINEST,	message+" sucessfully registered:" ,this);
+			waiterLogger.logger().log(Level.FINEST,	message+" sucessfully registered: i an here 0" ,this);
 		} catch (Exception e) {
 			// Writes exception to log
 			waiterLogger.logger().log(Level.FINEST,	message+" failed to registered:\n" + e.getMessage(),this);
@@ -247,7 +249,7 @@ public class Waiter extends Thread implements WaiterOrderListener{
 					if(!lockedOnRest){
 						// Writes to log
 						waiterLogger.logger().log(Level.FINEST,message+" at while(theRest.isRunning()&&(!inShift))"+"\nat while(!inShift) in failed to lock the restaurant"  ,this);
-
+						
 						synchronized(this){
 							try {
 								// Writes to log
@@ -264,9 +266,8 @@ public class Waiter extends Thread implements WaiterOrderListener{
 					}
 					// If locked the rest
 					else if (lockedOnRest){
-						// Writes to log
-						waiterLogger.logger().log(Level.FINEST,message+"\nat (!inShift) sucessfully loked the restaurant" ,this);
-
+						// Writes to log************************************************************************************************
+						waiterLogger.logger().log(Level.FINEST,message+"\nat (!inShift) sucessfully locked the restaurant" ,this);
 						try {
 							// Register waiter to shift
 							registerToShift();
@@ -305,6 +306,7 @@ public class Waiter extends Thread implements WaiterOrderListener{
 			
 			waiterLogger.logger().log(Level.FINEST,message+" in while(theRest.isRunning()&&(!inShift)) sucessfully registered" ,this);
 		}
+		
 		// While the waiter is in shift and the rest is open
 		while(inShift && resturant.isOpen()){
 			// Writes to log
@@ -356,9 +358,9 @@ public class Waiter extends Thread implements WaiterOrderListener{
 						else{
 							// Writes to log
 							waiterLogger.logger().log(Level.FINEST,message +" in while(inShift)  \n"+
-									"maxCustToServe: "+resturant.getMaxCustomersPerWaiter() + " myServedAndPayed.size(): " + myServedAndPayed.size() +  " going to wait(2000)" ,this);
+									"maxCustToServe: "+resturant.getMaxCustomersPerWaiter() + " myServedAndPayed.size(): " + myServedAndPayed.size() +  " going to wait(2000) am i here wait??" ,this);
 							// Wait for more customers to be added to waiter
-							wait(2000);
+							wait(10);
 						}
 					} catch (InterruptedException e) {
 						// Writes exception to log
@@ -372,7 +374,6 @@ public class Waiter extends Thread implements WaiterOrderListener{
 		waiterLogger.logger().log(Level.FINEST,"<<<<"+message+" task sucessfully finished",this);
 		waiterLogger.logger().log(Level.INFO,"<<<<"+message+" task sucessfully finished",this);
 
-		System.out.println("Waiters Finished?");
 		// Updates the rest that the waiter has finished his shift
 		resturant.setFinishedMyShift(this);
 		// Close the handler
@@ -599,7 +600,6 @@ public class Waiter extends Thread implements WaiterOrderListener{
 				// If failed to lock the order
 				if(!lockedOnOrder)
 				{
-					
 					synchronized (this) {
 						// Writes to log
 						waiterLogger.logger().log(Level.FINEST,">>>>"+message +"  in if(!lockedOnOrder)  for " + newOrder.toString()+"in while(!lockedOnOrder) Order: "+newOrder.getNumOfOrder()+

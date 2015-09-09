@@ -18,12 +18,13 @@ public class Kitchen {
 		newOrders = new Vector<Order>();
 		// Starts the logger
 		kitchenLogger= new WorkingDay("kitchen",this);
+		kitchenLogger.setLoggerLevel(Level.FINEST);
 		// Opens the kitchen
 		setOpen(true);
 		// Writes to log 
 		message = "["+Thread.currentThread().getStackTrace()[1].getMethodName()+"] ";
 		kitchenLogger.logger().log(Level.FINEST,"<<<<"+message+"created",this);
-		kitchenLogger.setLoggerLevel(Level.FINEST);
+		
 		
 		
 	}
